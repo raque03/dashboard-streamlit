@@ -136,7 +136,15 @@ st.divider()
 
 st.subheader("Evolución de ventas")
 
-ventas_tiempo = ventas_comerciales.groupby("Fecha")["Monto"].sum().reset_index()
+# Opción para incluir devoluciones
+mostrar_devoluciones = st.checkbox("Incluir devoluciones en el análisis", value=True)
+
+if mostrar_devoluciones:
+    ventas_filtradas = ventas_comerciales
+else:
+    ventas_filtradas = ventas_comerciales[ventas_comerciales["Monto"] > 0]
+
+ventas_tiempo = ventas_filtradas.groupby("Fecha")["Monto"].sum().reset_index()
 
 fig_line = px.line(
     ventas_tiempo,
@@ -146,6 +154,7 @@ fig_line = px.line(
 )
 
 st.plotly_chart(fig_line, use_container_width=True)
+
 
 # ----------------------------------------------------
 # VENTAS POR ZONA
